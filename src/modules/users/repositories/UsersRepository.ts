@@ -21,4 +21,18 @@ export default class UsersRepository {
     });
     return user;
   }
+
+  public async update({ name, email, password }: User): Promise<User> {
+    const prisma = new PrismaService();
+    const user = await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        name,
+        password,
+      },
+    });
+    return user;
+  }
 }

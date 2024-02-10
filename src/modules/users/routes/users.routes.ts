@@ -5,6 +5,17 @@ import UsersController from '../controllers/UsersController';
 const usersRouter = Router();
 const usersController = new UsersController();
 
+usersRouter.put(
+  '/',
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string(),
+      email: Joi.string().email().required(),
+      password: Joi.string(),
+    },
+  }),
+  usersController.update,
+);
 usersRouter.post(
   '/',
   celebrate({
