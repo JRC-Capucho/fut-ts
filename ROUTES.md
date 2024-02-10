@@ -2,12 +2,6 @@
 
 ## Endpoints
 
-### Health Check
-
-#### GET `/health-check`
-
-Realiza uma verificação de saúde da API.
-
 ### Usuários
 
 #### POST `/users`
