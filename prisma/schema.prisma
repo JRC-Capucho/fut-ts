@@ -10,34 +10,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Matches {
+  id                   Int      @id @default(autoincrement())
+  day                  DateTime
+  start                DateTime
+  end                  DateTime
+  home_team_scoreboard Int      @default(0)
+  away_team_scoreboard Int      @default(0)
+  winner               Int?
+  league               League   @relation(fields: [league_id], references: [id], onDelete: Cascade)
+  league_id            Int
+  homeTeam             Team     @relation("HomeTeamRelation", fields: [home_team], references: [id])
+  awayTeam             Team     @relation("AwayTeamRelation", fields: [away_team], references: [id])
+  home_team            Int
+  away_team            Int
+}
+
 model Player {
   id           Int    @id @default(autoincrement())
   name         String
   shirt_number Int
   gols         Int    @default(0)
-  team         Team   @relation(fields: [team_id], references: [id],onDelete:Cascade)
+  team         Team   @relation(fields: [team_id], references: [id])
   team_id      Int
 }
 
 model Team {
-  id        Int      @id @default(autoincrement())
-  name      String
-  points    Int      @default(0)
-  gols      Int      @default(0)
-  matches   Int      @default(0)
-  league    League   @relation(fields: [league_id], references: [id],onDelete: Cascade)
-  league_id Int
-  Player    Player[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  points      Int       @default(0)
+  gols        Int       @default(0)
+  matches     Int       @default(0)
+  league      League    @relation(fields: [league_id], references: [id], onDelete: Cascade)
+  league_id   Int
+  Players     Player[]
+  homeMatches Matches[] @relation("HomeTeamRelation")
+  awayMatches Matches[] @relation("AwayTeamRelation")
 }
 
 model League {
-  id      Int      @id @default(autoincrement())
+  id      Int       @id @default(autoincrement())
   name    String
   start   DateTime
   end     DateTime
-  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id Int
   Team    Team[]
+  Matches Matches[]
 }
 
 model User {
