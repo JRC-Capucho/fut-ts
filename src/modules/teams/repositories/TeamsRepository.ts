@@ -6,6 +6,12 @@ interface IRequest {
   league_id: number;
 }
 
+interface IRequestEnd{
+  id:number
+  gols:number
+  points:number
+}
+
 interface IRequestUpdate {
   id: number;
   name: string;
@@ -75,5 +81,21 @@ export default class TeamsRepository {
     });
 
     return team;
+  }
+
+  public async updateEndMatch({id,gols,points}:IRequestEnd):Promise<Team|undefined>
+{
+    const prisma = new PrismaService()
+
+    const team = await prisma.team.update({
+      where:{
+        id
+      },
+      data:{
+        gols,
+        points
+      }
+    })
+    return team
   }
 }

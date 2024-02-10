@@ -101,4 +101,17 @@ export default class PlayerRepository {
     });
     return player;
   }
+
+  public async updateEndMatch(id:number,gols:number):Promise<Player | undefined>{
+    const prisma = new PrismaService();
+    const player = await prisma.player.update({
+      where:{
+        id
+      },
+      data:{
+        gols
+      }
+    })
+    return player
+  }
 }

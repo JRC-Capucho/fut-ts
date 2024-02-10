@@ -1,5 +1,6 @@
 import PrismaService from '@modules/prisma/services/PrismaService';
 import Match from '../entities/Match';
+import { match } from 'assert';
 
 interface IRequest {
   day: Date;
@@ -42,11 +43,19 @@ export default class MatchesRepository {
     leagueId,
   }: IRequest): Promise<Match | undefined> {
     const prisma = new PrismaService();
+
+    const startDateTime = new Date(
+      `${day.toISOString().split('T')[0]}T${start}:00Z`,
+    );
+    const endDateTime = new Date(
+      `${day.toISOString().split('T')[0]}T${end}:00Z`,
+    );
+
     const match = await prisma.matches.create({
       data: {
         day,
-        start,
-        end,
+        start: startDateTime,
+        end: endDateTime,
         home_team: homeTeam,
         away_team: awayTeam,
         league_id: leagueId,
@@ -90,11 +99,32 @@ export default class MatchesRepository {
     return match;
   }
 
-  public async findByDay(day: Date): Promise<Match | undefined> {
+  public async findByDay(day: Date): Promise<Match[] | undefined> {
     const prisma = new PrismaService();
-    const match = await prisma.matches.findFirst({
+    const match = await prisma.matches.findMany({
       where: {
         day,
+      },
+    });
+    return match;
+  }
+
+  public async updateEndMatch(
+    id: number,
+    homeTeamGols: number,
+    awayTeamGols: number,
+    winner?: number,
+  ): Promise<Match> {
+    const prisma = new PrismaService();
+
+    const match = await prisma.matches.update({
+      where: {
+        id,
+      },
+      data: {
+        home_team_scoreboard: homeTeamGols,
+        away_team_scoreboard: awayTeamGols,
+        winner: winner ? winner : 0,
       },
     });
     return match;

@@ -4,6 +4,7 @@ import MatchesRepository from '../repositories/MatchesRepository';
 import LeaguesRepository from '@modules/leagues/repositories/LeaguesRepository';
 
 interface IRequest {
+  id:number
   day: Date;
   start: Date;
   end: Date;
@@ -12,7 +13,7 @@ interface IRequest {
   awayTeam: number;
 }
 
-export default class CreateMatchService {
+export default class UpdateMatchService {
   public async execute({
     day,
     start,
@@ -45,11 +46,11 @@ export default class CreateMatchService {
         const endDate = `${existingGame.end.getUTCHours().toString().padStart(2, '0')}:${existingGame.end.getUTCMinutes().toString().padStart(2, '0')}`;
   if ((start.toString() >= startDate && start.toString() <= endDate) || (end.toString() >= startDate && end.toString() <= endDate))
       throw new AppError('The new match overlaps with an existing match.',  422);
-
     }
     }
 
-    const match = await matchesRepository.create({
+    const match = await matchesRepository.update({
+      id,
       day,
       start,
       end,
